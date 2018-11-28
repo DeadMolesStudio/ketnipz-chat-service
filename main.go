@@ -27,7 +27,7 @@ func main() {
 	go chat.Run()
 
 	http.HandleFunc("/chat/ws", middleware.RecoverMiddleware(middleware.AccessLogMiddleware(
-		middleware.CORSMiddleware(middleware.SessionMiddleware(ConnectChat)))))
+		middleware.CORSMiddleware(middleware.SessionMiddleware(ConnectChat, sm)))))
 
 	logger.Info("starting server at: ", 8083)
 	logger.Panic(http.ListenAndServe(":8083", nil))

@@ -1,11 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181125072946-f2ad4a04856c h1:5OnkiIALADljPOFt4oSIMSgaAok+hK0KKkRDYXGxSJ0=
-github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181125072946-f2ad4a04856c/go.mod h1:VbsS4QHLGVhPNvCarmGIoKsezeWdqFFQlTQGpnk1Mn0=
-github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181125075630-1c5f604ab35e h1:56i+9ve/WgSgwUbhjpSFjGuNMQM9dk3zTSKBIPYm6aE=
-github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181125075630-1c5f604ab35e/go.mod h1:xTOFkaIbhniZ0snOowIgjyiD8PBLCPOet29al2TOgOs=
-github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181125082631-77479b936d44 h1:1NMjG0HXaTqH9MOyUMzsJPEk6DOddhnWH+NXPQj/86g=
-github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181125082631-77479b936d44/go.mod h1:xTOFkaIbhniZ0snOowIgjyiD8PBLCPOet29al2TOgOs=
+github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181128194106-a2a7aee1ac3d h1:wu5XyYWWxs/OjmIxEs65DdcaFovoTS4LzcrkEil5Iv0=
+github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181128194106-a2a7aee1ac3d/go.mod h1:xTOFkaIbhniZ0snOowIgjyiD8PBLCPOet29al2TOgOs=
 github.com/go-sql-driver/mysql v1.4.0/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:tluoj9z5200jBnyusfRPU2LqT6J+DAorxEvtC7LHB+E=
