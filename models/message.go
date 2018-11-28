@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+//easyjson:json
 type Message struct {
 	ID       uint      `json:"id,omitempty" db:"message_id"`
 	Author   *uint     `json:"author,omitempty" db:"author_id"`

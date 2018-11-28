@@ -26,11 +26,13 @@ type ProcessWSMessage struct {
 	From *User
 }
 
+//easyjson:json
 type WSMessage struct {
 	Action  string          `json:"action"`
 	Payload json.RawMessage `json:"payload"`
 }
 
+//easyjson:json
 type SendWSMessage struct {
 	Action  string      `json:"action"`
 	Payload interface{} `json:"payload"`
@@ -39,8 +41,7 @@ type SendWSMessage struct {
 func (u *User) Listen() {
 	for {
 		m := &WSMessage{}
-		err := u.Conn.ReadJSON(m)
-
+		_, raw, err := u.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err) {
 				if !u.Anon {
@@ -53,6 +54,11 @@ func (u *User) Listen() {
 			}
 			chat.Leave <- u
 			return
+		}
+		err = m.UnmarshalJSON(raw)
+		if err != nil {
+			logger.Error(err)
+			continue
 		}
 
 		logger.Infof("Read WSMessage: %v", *m)
@@ -76,7 +82,7 @@ func (u *User) Listen() {
 			}
 		case "send":
 			mess := &models.Message{}
-			err := json.Unmarshal(m.Payload, mess)
+			err := mess.UnmarshalJSON(m.Payload)
 			if err != nil {
 				logger.Infof("Bad payload: %v", *m)
 				chat.Send <- &ProcessWSMessage{

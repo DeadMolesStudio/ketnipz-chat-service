@@ -3,6 +3,8 @@ package chat
 import (
 	"sync"
 
+	"github.com/gorilla/websocket"
+
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/go-park-mail-ru/2018_2_DeadMolesStudio/logger"
@@ -80,7 +82,11 @@ func (c *Chat) sendWSMessageToSession(m *ProcessWSMessage) {
 		return
 	}
 	d := u.(*Data)
-	err := d.Conn.WriteJSON(m.WSM)
+	j, err := m.WSM.MarshalJSON()
+	if err != nil {
+		logger.Error(err)
+	}
+	err = d.Conn.WriteMessage(websocket.BinaryMessage, j)
 	if err != nil {
 		logger.Infof("Error while sending to user %v: %v", *d, err)
 	}
@@ -100,7 +106,11 @@ func (c *Chat) sendMessage(m *ProcessWSMessage) {
 		}
 		c.Users.Range(func(k, v interface{}) bool {
 			d := v.(*Data)
-			err := d.Conn.WriteJSON(m.WSM)
+			j, err := m.WSM.MarshalJSON()
+			if err != nil {
+				logger.Error(err)
+			}
+			err = d.Conn.WriteMessage(websocket.BinaryMessage, j)
 			if err != nil {
 				logger.Info(err)
 			}
@@ -118,7 +128,11 @@ func (c *Chat) sendMessage(m *ProcessWSMessage) {
 			c.Users.Range(func(k, v interface{}) bool {
 				d := v.(*Data)
 				if d.UID == *mess.To {
-					err := d.Conn.WriteJSON(m.WSM)
+					j, err := m.WSM.MarshalJSON()
+					if err != nil {
+						logger.Error(err)
+					}
+					err = d.Conn.WriteMessage(websocket.BinaryMessage, j)
 					if err != nil {
 						logger.Info(err)
 						return false
