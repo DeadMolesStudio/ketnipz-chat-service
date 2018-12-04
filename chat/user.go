@@ -5,9 +5,6 @@ import (
 
 	"github.com/go-park-mail-ru/2018_2_DeadMolesStudio/logger"
 	"github.com/gorilla/websocket"
-
-	"chat/database"
-	"chat/models"
 )
 
 type User struct {
@@ -22,25 +19,19 @@ type Data struct {
 }
 
 type ProcessWSMessage struct {
-	WSM  *SendWSMessage
 	From *User
+	WSM  interface{}
 }
 
 //easyjson:json
-type WSMessage struct {
+type ReceivedWSMessage struct {
 	Action  string          `json:"action"`
 	Payload json.RawMessage `json:"payload"`
 }
 
-//easyjson:json
-type SendWSMessage struct {
-	Action  string      `json:"action"`
-	Payload interface{} `json:"payload"`
-}
-
 func (u *User) Listen() {
 	for {
-		m := &WSMessage{}
+		m := &ReceivedWSMessage{}
 		_, raw, err := u.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err) {
@@ -63,66 +54,9 @@ func (u *User) Listen() {
 
 		logger.Infof("Read WSMessage: %v", *m)
 
-		switch m.Action {
-		case "get":
-			res, err := database.GetAllGlobalMessages()
-			logger.Infof("gotcha all messages, request from %v", u.SessionID)
-			if err != nil {
-				logger.Error(err)
-				continue
-			}
-			chat.Send <- &ProcessWSMessage{
-				From: u,
-				WSM: &SendWSMessage{
-					Action: "get",
-					Payload: models.Messages{
-						Msgs: res,
-					},
-				},
-			}
-		case "send":
-			mess := &models.Message{}
-			err := mess.UnmarshalJSON(m.Payload)
-			if err != nil {
-				logger.Infof("Bad payload: %v", *m)
-				chat.Send <- &ProcessWSMessage{
-					From: u,
-					WSM: &SendWSMessage{
-						Action:  "error",
-						Payload: "bad payload",
-					},
-				}
-				return
-			}
-			logger.Infof("The message is: %v", *mess)
-
-			if !u.Anon {
-				mess.Author = new(uint)
-				*mess.Author = u.UID
-			}
-			mess, err = database.CreateMessage(mess)
-			if err != nil {
-				logger.Infof("Message cannot be saved: %v", err)
-				continue
-			}
-			logger.Infof("Message saved to database: %v", *m)
-			chat.Send <- &ProcessWSMessage{
-				From: u,
-				WSM: &SendWSMessage{
-					Action:  "send",
-					Payload: mess,
-				},
-			}
-		default:
-			logger.Infof("Unknown WSMessage: %v", *m)
-
-			chat.Send <- &ProcessWSMessage{
-				From: u,
-				WSM: &SendWSMessage{
-					Action:  "error",
-					Payload: "unknown action type",
-				},
-			}
+		chat.Send <- &ProcessWSMessage{
+			From: u,
+			WSM:  m,
 		}
 	}
 }

@@ -8,20 +8,24 @@ import (
 	"chat/models"
 )
 
-func CreateMessage(m *models.Message) (*models.Message, error) {
-	res := &models.Message{}
-	qres := db.DB().QueryRowx(`
-		INSERT INTO message (author_id, to_user, message_text)
-		VALUES ($1, $2, $3) RETURNING *`,
+func CreateMessage(dm *db.DatabaseManager, m *models.Message) (*models.Message, error) {
+	dbo, err := dm.DB()
+	if err != nil {
+		return nil, err
+	}
+	qres := dbo.QueryRowx(`
+	INSERT INTO message (author_id, to_user, message_text)
+	VALUES ($1, $2, $3) RETURNING *`,
 		m.Author, m.To, m.Message)
 	if err := qres.Err(); err != nil {
 		pqErr := err.(*pq.Error)
 		switch pqErr.Code {
 		case "23502":
-			return res, db.ErrNotNullConstraintViolation
+			return nil, db.ErrNotNullConstraintViolation
 		}
 	}
-	err := qres.StructScan(res)
+	res := &models.Message{}
+	err = qres.StructScan(res)
 	if err != nil {
 		return res, err
 	}
@@ -29,9 +33,13 @@ func CreateMessage(m *models.Message) (*models.Message, error) {
 	return res, nil
 }
 
-func GetAllGlobalMessages() (*[]models.Message, error) {
+func GetAllGlobalMessages(dm *db.DatabaseManager) (*[]models.Message, error) {
+	dbo, err := dm.DB()
+	if err != nil {
+		return nil, err
+	}
 	res := &[]models.Message{}
-	err := db.DB().Select(res, `
+	err = dbo.Select(res, `
 		SELECT * FROM message
 		WHERE to_user IS NULL
 		ORDER BY created`)
@@ -42,12 +50,12 @@ func GetAllGlobalMessages() (*[]models.Message, error) {
 	return res, nil
 }
 
-func EditMessage(m *models.Message) error {
+func EditMessage(dm *db.DatabaseManager, m *models.Message) error {
 
 	return nil
 }
 
-func DeleteMessage(m *models.Message) error {
+func DeleteMessage(dm *db.DatabaseManager, m *models.Message) error {
 
 	return nil
 }

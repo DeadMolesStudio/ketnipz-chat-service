@@ -1,4 +1,4 @@
-# github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181128194106-a2a7aee1ac3d
+# github.com/go-park-mail-ru/2018_2_DeadMolesStudio v0.0.0-20181130120947-70c35d149846
 github.com/go-park-mail-ru/2018_2_DeadMolesStudio/database
 github.com/go-park-mail-ru/2018_2_DeadMolesStudio/logger
 github.com/go-park-mail-ru/2018_2_DeadMolesStudio/middleware

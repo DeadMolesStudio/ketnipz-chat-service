@@ -17,13 +17,13 @@ func main() {
 	l := logger.InitLogger()
 	defer l.Sync()
 
-	db := database.InitDB("postgres@chat-db:5432", "chat")
-	defer db.Close()
+	dm := database.InitDatabaseManager("postgres@chat-db:5432", "chat")
+	defer dm.Close()
 
 	sm := session.ConnectSessionManager()
 	defer sm.Close()
 
-	chat := chat.InitChat()
+	chat := chat.InitChat(dm)
 	go chat.Run()
 
 	http.HandleFunc("/chat/ws", middleware.RecoverMiddleware(middleware.AccessLogMiddleware(
