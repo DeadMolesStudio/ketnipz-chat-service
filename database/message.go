@@ -19,8 +19,7 @@ func CreateMessage(dm *db.DatabaseManager, m *models.Message) (*models.Message, 
 		m.Author, m.To, m.Message)
 	if err := qres.Err(); err != nil {
 		pqErr := err.(*pq.Error)
-		switch pqErr.Code {
-		case "23502":
+		if pqErr.Code == "23502" {
 			return nil, db.ErrNotNullConstraintViolation
 		}
 	}

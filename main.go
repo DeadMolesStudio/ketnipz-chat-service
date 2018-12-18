@@ -15,7 +15,12 @@ import (
 
 func main() {
 	l := logger.InitLogger()
-	defer l.Sync()
+	defer func() {
+		err := l.Sync()
+		if err != nil {
+			logger.Errorf("error while syncing log data: %v", err)
+		}
+	}()
 
 	dm := database.InitDatabaseManager("postgres@chat-db:5432", "chat")
 	defer dm.Close()
