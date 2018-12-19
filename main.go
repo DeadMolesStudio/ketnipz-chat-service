@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -14,6 +15,11 @@ import (
 )
 
 func main() {
+	dbConnStr := flag.String("db_connstr", "postgres@localhost:5432", "postgresql connection string")
+	dbName := flag.String("db_name", "postgres", "database name")
+	authConnStr := flag.String("auth_connstr", "localhost:8081", "auth-service connection string")
+	flag.Parse()
+
 	l := logger.InitLogger()
 	defer func() {
 		err := l.Sync()
@@ -22,17 +28,17 @@ func main() {
 		}
 	}()
 
-	dm := database.InitDatabaseManager("postgres@chat-db:5432", "chat")
+	dm := database.InitDatabaseManager(*dbConnStr, *dbName)
 	defer dm.Close()
 
-	sm := session.ConnectSessionManager()
+	sm := session.ConnectSessionManager(*authConnStr)
 	defer sm.Close()
 
 	chat := chat.InitChat(dm)
 	go chat.Run()
 
 	http.HandleFunc("/chat/ws", middleware.RecoverMiddleware(middleware.AccessLogMiddleware(
-		middleware.CORSMiddleware(middleware.SessionMiddleware(ConnectChat, sm)))))
+		middleware.CORSMiddleware(middleware.SessionMiddleware(http.HandlerFunc(ConnectChat), sm)))))
 
 	logger.Info("starting server at: ", 8083)
 	logger.Panic(http.ListenAndServe(":8083", nil))
